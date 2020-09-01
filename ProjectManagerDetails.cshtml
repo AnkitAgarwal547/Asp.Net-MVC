@@ -1,0 +1,179 @@
+﻿@model ViewModel.ViewModel_ProjectManager
+@{
+    ViewBag.Title = "Project Manager";
+    Layout = "~/Views/Shared/_InnovationLayout.cshtml";
+}
+
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0 text-dark">Campaign Manager Assignment (Project Manager & Auditor)</h1>
+            </div><!-- /.col -->
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="/User/Dashboard">Home</a></li>
+                    <li class="breadcrumb-item active">Campaign Manager Assignment</li>
+                </ol>
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+</div>
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-default">
+                    <br>
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fa fa-info-circle" aria-hidden="true"></i> Project Manager & Auditor</h3>
+                    </div>
+                    @using (Html.BeginForm())
+                    {
+                        <!-- /.card-header -->
+                        <div class="card-body">
+
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label> Target Date</label>
+
+                                        @{ var impldate = "";}
+                                        @if (Model.Managers.Count > 0)
+                                        {
+                                            impldate = @String.Format("{0:MM/dd/yyyy}", Model.Managers.FirstOrDefault().implementationstardate);
+                                        }
+                                        else
+                                        {
+                                            impldate = "";
+                                        }
+
+
+                                        <input type="text" name="stardate" id="stardate" readonly="readonly" class="form-control" value="@impldate" />
+                                        @*<p class="days_from_today">65 Days from Today</p>*@
+                                    </div>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        @Html.HiddenFor(x => x.idea)
+                                        @Html.HiddenFor(x => x.id)
+                                        @Html.HiddenFor(x => x.allowrepeat)
+
+                                        @*<label>Select Project Manager</label>*@
+                                        @*@Html.DropDownListFor(x => x.manager, ViewBag.manager as SelectList, "Select", new { @class = "form-control" })*@
+
+                                    </div>
+                                </div>
+                                @*<div class="col-md-2">
+                                    <label class="w100 btn-block">&nbsp;</label>
+                                    <a value="Add" id="btnadd" class="btn btn-primary" href="javascript:void 0" onclick="AddManger(this)">
+                                        <i class="fa fa-plus mr-1" aria-hidden="true"></i>
+                                        Add
+                                    </a>
+                                </div>*@
+                            </div>
+
+                            <!-- text input -->
+                            <h6 class="PM-title">Project Manager</h6>
+                            <table id="tblprojectmanager" class="table table-bordered table-striped" border="1">
+                                <thead>
+                                    <tr>
+                                        <th style="display:none">Id</th>
+                                        <th>Name</th>
+                                        <th>Type</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.Managers.Count > 0)
+                                    {
+                                        foreach (var item in Model.Managers)
+                                        {
+                                            <tr>
+                                                <td style="display:none">@item.manager</td>
+                                                <td>@item.managername</td>
+                                                <td>
+                                                    @item._typename
+                                                </td> 
+                                                <td><a href="/Innovation/Campaign/TaskCreationDetails?userid=@item.manager&idea=@Model.idea&campid=0" class="btn btn-primary text-white">Detail</a></td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+
+                            <h6 class="PM-title">Auditors</h6>
+                            <table id="tblauditors" class="table table-bordered table-striped" border="1">
+                                <thead>
+                                    <tr>
+                                        <th>Type</th>
+                                        <th>Auditor</th>
+                                       <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.Auditors.Count > 0)
+                                    {
+                                        foreach (var item in Model.Auditors)
+                                        {
+                                            <tr>
+                                                <td>@item.typename</td>
+                                                <td>
+                                                    @item.auditorname
+                                                </td>
+                                                <td><a href="/Innovation/Campaign/StartAuditingDetails?userid=@item.auditor&idea=@Model.idea" class="btn btn-primary text-white">Detail</a></td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+
+                            @*<div class="form-group">
+                                    <label>Select Auditor</label>
+                                    @Html.DropDownListFor(x => x.auditor, ViewBag.auditor as SelectList, "Select", new { @class = "form-control" })
+                                </div>*@
+
+                            @if (ViewBag.Message != null)
+                            {
+                                <script>
+                                    alert('@ViewBag.Message');
+                                </script>
+                            }
+                        </div>
+                        <!-- /.card-body -->
+                        @*<div class="card-footer">
+                                <div class="float-right">
+                                    <button type="submit" class="btn btn-primary"><i class="fa fa-floppy-o"></i> Save</button>
+                                </div>
+                            </div>*@
+
+                        @*<div class="card-footer">
+                            <div class="float-right">
+                                @if (Model.Auditors.Count > 0)
+                                {
+                                    
+                                    <button type="button" class="btn btn-primary" onclick="FinalSubmit()">Next</button>
+                                }
+                                else
+                                {
+                                    <span class="text-danger">Pending at Campaign Manager's end.</span>
+                                }
+                            </div>
+                        </div>*@
+
+                    }
+                </div>
+
+
+
+            </div>
+        </div>
+        <!-- /.row -->
+    </div><!-- /.container-fluid -->
+</div>
+<script>
+    function FinalSubmit() {
+
+    }
+</script>
+

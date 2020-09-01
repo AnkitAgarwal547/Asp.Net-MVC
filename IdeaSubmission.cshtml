@@ -1,0 +1,624 @@
+﻿@model ViewModel.ViewModel_CampaignIdeaSubmission
+@{
+    ViewBag.Title = "Idea Submission";
+    Layout = "~/Areas/User/Views/Shared/_LayoutUser.cshtml";
+}
+<style type="text/css">
+    .form-control {
+        display: block !important;
+    }
+</style>
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0 text-dark">Idea Submission Stage</h1>
+            </div><!-- /.col -->
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="/User/Dashboard">Home</a></li>
+                    <li class="breadcrumb-item active">Idea Submission</li>
+                </ol>
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+</div>
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card campaignBox">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="formShow2" id="form1">
+                                    <form>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label for="exampleInputEmail1">Idea Title <span class="mandatory">*</span></label>
+                                                    @Html.TextBoxFor(x => x.Title, new { placeholder = " ", @class = "form-control" })
+                                                </div>
+                                            </div>
+
+                                            @*<div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <label for="exampleInputEmail1">Select Time Period For Idea <span class="mandatory">*</span></label>
+                                                        @Html.DropDownListFor(x=>x.TimePeriod, ViewBag.TimePeriod as SelectList,null, new { @class = "form-control" })
+                                                        @Html.TextBoxFor(x => x.TimePeriod, new { placeholder = " ", @class = "form-control" })
+                                                    </div>
+                                                </div>*@
+
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Category <span class="mandatory">*</span></label>
+                                                    @Html.DropDownListFor(x => x.CategoryId, ViewBag.Category as SelectList, "Select", new { @class = "form-control" })
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Sub Category <span class="mandatory">*</span></label>
+                                                    @Html.DropDownListFor(x => x.SubCategoryId, ViewBag.SubCategory as SelectList, "Select", new { @class = "form-control" })
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label>Description</label>
+                                                    @Html.TextAreaFor(x => x.description, new { @class = "form-control" })
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label>Add Attachments</label>
+                                                    <input name="uploadfiles" id="uploadfiles" multiple="" class="form-control" type="file">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 hidden" id="uploadedfiles">
+                                                <div class="form-group">
+                                                    <label>Uploaded files</label>
+                                                    <ol id="olfiles"></ol>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row" id="main-form">
+                                        </div>
+
+                                    </form>
+                                </div>
+
+
+
+                                @*<div id="readymade-forms">
+
+                                    </div>*@
+
+
+
+
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    @if (Model.TimePeriod.Date >= DateTime.Now.Date)
+                                    {
+                                        <input type="button" value="Submit" class="continueBtn" id="btnSubmit" />
+                                    }
+                                    else
+                                    {
+                                        <input type="button" value="Submit" class="continueBtn btnDisable" onclick="IdeaSubmitDateMsg()" />   
+                                    }
+
+                                    <input type="button" value="Previous" style="display:none;" class="previousBtn" id="btnPrevious" />
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+            </div>
+        </div>
+        <!-- /.row -->
+    </div><!-- /.container-fluid -->
+</div>
+
+
+<style>
+    .activeformDiv .selectForm {
+        background-color: #27c1e7;
+        color: #fff;
+    }
+
+    input[type=checkbox], [type=checkbox] {
+        margin-left: 10px;
+    }
+</style>
+
+<script>
+    var dynamic_ids = new Array();
+    var mandatorydynamic_fields = [];
+    var _formId;
+    var uploadfiles = new Array();
+    window.addEventListener('DOMContentLoaded', function () {
+        (function ($) {
+
+        })(jQuery);
+
+    });
+    $(document).ready(function () {
+        $('#link_dashboard').addClass('active');
+        CheckForEdit();
+        GetAllRadyMadeForms();
+        $('#new-form').click(function () {
+            $('#custom-form').removeClass('hidden');
+            $('#form1').addClass('hidden');
+        });
+
+        $('#btnCancel').click(function () {
+            $('#custom-form').addClass('hidden');
+            $('#form1').removeClass('hidden');
+        });
+        $('#controls').change(function () {
+            if ($('#controls option:selected').val() == "Dropdown") {
+                $('#txtarea').removeClass('hidden');
+            }
+            else {
+                $('#txtarea').addClass('hidden');
+                $('#options').val('');
+            }
+        });
+
+        $('#btnAdd').click(function () {
+
+            if ($('#formname').val() == "" || $('#inputtype').val() == "") {
+                toastr.error('Please fill all mandatory fields.');
+                return false;
+            }
+
+            var duplicatename = checkName($('#inputtype').val());
+            if (duplicatename == true) {
+                toastr.error('Name can not be duplicate');
+                return false;
+            }
+
+            var options = Field();
+            if ($('#options').attr('class') == "") {
+                if (options == false) {
+                    return false;
+                }
+            }
+            $('#customelement').append('<tr><td>' + $('#inputtype').val() + '</td><td>' + $('#controls option:selected').val() + '</td><td>' + options + '</td><td>' + ($('#cbk_ismandatory').prop("checked") == true ? 'Yes' : 'No') + '</td><td><input type="button" value="Remove" onclick="Remove(this)"/></td></tr>');
+            $('#inputtype').val('');
+            $('#cbk_ismandatory').removeAttr("checked");
+        });
+
+
+
+        $('#btnSubmit').click(function () {
+            if (CheckValidation()) {
+                $('#loader').removeClass('hidden');
+                var files = $("#uploadfiles").get(0).files;
+                var fileData = new FormData();
+                for (var i = 0; i < files.length; i++) {
+                    fileData.append("fileInput", files[i]);
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "/User/User/UploadFiles",
+                    dataType: "json",
+                    contentType: false, // Not to set any content header
+                    processData: false, // Not to process data
+                    data: fileData,
+                    async: false,
+                    success: function (result) {
+                        for (var i = 0; i < result.length; i++) {
+                            var _filepath = {};
+                            _filepath.FilePath = result[i];
+                            uploadfiles.push(_filepath);
+                        }
+                        //if (result.length > 0) {
+                        //    uploadfiles.push(result);
+                        //}
+                    },
+                    error: function (xhr, status, error) {
+                        alert(status);
+                    }
+                });
+                
+                var models = new Array();
+                var otherfields = new Array();
+                for (var i = 0; i < dynamic_ids.length; i++) {
+                    debugger;
+                    var _value = GetValueFromElement(dynamic_ids[i].id, dynamic_ids[i].field_type, dynamic_ids[i].ismandatory, dynamic_ids[i].field_name);
+                    var fieldValues = "";
+                    if (dynamic_ids[i].field_type == "Checkbox") {
+                        $('input[name=' + dynamic_ids[i].field_name + ']:checked').each(function () {
+                            var selectedtext = $(this).next('label').text();
+                            fieldValues += selectedtext + ",";
+                        });
+                        fieldValues = fieldValues.replace(/,\s*$/, "");
+                    }
+                    else if (dynamic_ids[i].field_type == "Radio") {
+                        $('input[name=' + dynamic_ids[i].field_name + ']:checked').each(function () {
+                            var idVal = $(this).attr("id");
+                            fieldValues = $("#" + idVal).next('label').text();
+                        });
+                    }
+                    else {
+                        fieldValues = _value;
+                    }
+
+                    var other = {};
+                    other.form_id = dynamic_ids[i].form_id;
+                    other.value = fieldValues;
+                    other.form_field_id = dynamic_ids[i].id;
+                    otherfields.push(other);
+                }
+                var _formData = {};
+                _formData.fomrid = _formId;
+                // _formData.TimePeriod = $('#TimePeriod').val();//Replace with ddl
+                _formData.Title = $('#Title').val();
+                _formData.CategoryId = $('#CategoryId option:selected').val();
+                _formData.SubCategoryId = $('#SubCategoryId option:selected').val();
+                _formData.description = $('#description').val();
+                _formData.otherfields = otherfields;
+                _formData.uploadfiles = uploadfiles;
+                $.ajax({
+                    url: '/User/User/IdeaSubmissionByUser',
+                    type: 'post',
+                    contentType: 'application/json; charet=utf-8',
+                    data: JSON.stringify(_formData),
+                    dataType: 'json',
+                    success: function (data) {
+                        toastr.success('Idea saved successfully');
+                        window.location = '/User/User/CampaignDetails';
+                        console.log(data);
+                        //$.post("/User/User/CampaignDetails", function () {
+                        //    // Do something
+
+                        //    return true; // prevents redirection
+                        //});
+                    },
+                    error: function (data) {
+                        console.log(data);
+                    }
+                });
+            }
+        });
+
+
+        $('#btnPrevious').click(function () {
+            window.location.href = "CampaignInfo";
+        });
+
+        $('#CategoryId').change(function () {
+            $('#SubCategoryId').empty();
+            $('#SubCategoryId').append('<option>Select</option>');
+            if ($('#CategoryId option:selected').text() == 'Select') {
+                return false;
+            }
+            $.ajax({
+                url: '/User/User/GetSubCategory',
+                type: 'post',
+                contentType: 'application/json; charet=utf-8',
+                data: "{cate:" + $('#CategoryId option:selected').val() + "}",
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data);
+                    $.each(data, function (i, v) {
+                        $('#SubCategoryId').append($('<option></option>').html(v.name).val(v.id));
+                    });
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+            });
+        });
+
+
+        
+    });
+
+    function CheckValidation() {
+        var returnVal = true;
+        var allowidea = $("#chkAllowIdeas").prop("checked");
+        var title = $("#Title").val();
+        var category = $("#CategoryId").val();
+        var Subcategory = $("#SubCategoryId").val();
+        if (title.trim() == "") {
+            toastr.error('Title is required.');
+            returnVal = false;
+        }
+        else if (category.trim() == "") {
+            toastr.error('Category is required.');
+            returnVal = false;
+        }
+        else if (Subcategory.trim() == "") {
+            toastr.error('Sub category is required.');
+            returnVal = false;
+        }
+        $.each(mandatorydynamic_fields, function (index, value) {
+            var fieldId;
+            if (value.Type == "Radio") {
+                fieldId = $("input[name='" + value.fieldname + "']:checked").val();
+                if (fieldId === undefined) {
+                    fieldId = "";
+                }
+            }
+            else if (value.Type == "Checkbox") {
+                $('input[name=' + value.fieldname + ']:checked').each(function () {
+                    var selectedtext = $(this).next('label').text();
+                    fieldId += selectedtext + ",";
+                });
+                if (fieldId === undefined) {
+                    fieldId = "";
+                }
+            }
+            else {
+                fieldId = $("#" + value.Id).val();
+            }
+            if (fieldId.trim() == '') {
+                toastr.error(value.fieldname + ' is required.');
+                returnVal = false;
+                return false;
+            }
+        });
+        return returnVal;
+    }
+
+    function Field() {
+        if ($('#txtarea').hasClass("hidden") == false) {
+            if ($('#options').val() == "") {
+                toastr.error('Please enter options');
+                $('#options').focus();
+                return false;
+            }
+        }
+
+        var arr = new Array();
+        arr = $('#options').val().split("\n");
+
+        return arr;
+    }
+
+    function Remove(thisref) {
+        thisref.parentElement.parentElement.remove();
+    }
+
+    function checkName(name) {
+
+        var ststus = false;
+        $('#customelement tbody tr').each(function () {
+
+            var row = $(this);
+            var existing_name = row.find('td').eq(0).html();
+            if (name == existing_name) {
+                ststus = true;
+            }
+        });
+        return ststus;
+    }
+    function IdeaSubmitDateMsg()
+    {
+        toastr.warning('Unable to submit idea. Idea Submisstion date over.');
+        return false;
+    }
+    function GetAllRadyMadeForms() {
+        $.ajax({
+            url: '/Innovation/Campaign/GetForms',
+            type: 'post',
+            contentType: 'application/json; charet=utf-8',
+            data: "{UserId:1}",
+            dataType: 'json',
+            success: function (data) {
+                console.log(data);
+                $('#readymade-forms').empty();
+                //$('#readymade-forms').append('<div class="row"><div class="col-md-7" id="new-form"><a href="javascript:void 0" class="selectForm">Create New Form <i class="fa fa-plus-circle" aria-hidden="true"></i></a></div></div>');
+
+                for (var i = 0; i < data.length; i++) {
+                    $('#readymade-forms').append('<div><div class="row"><div class="col-md-7" onclick="GetFormFields(' + data[i].id + ')" id="new-form-' + data[i].id + '"><a href="javascript:void 0" class="selectForm">' + data[i].form_name + ' <i class="fa fa-plus-circle" aria-hidden="true"></i></a></div></div></div>');
+                }
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        });
+
+    }
+
+    function GetFormFields(id) {
+        _formId = id;
+        $('#main-form').empty();
+        dynamic_ids.length = 0;
+        $.ajax({
+            url: '/Innovation/Campaign/GetFormsFields',
+            type: 'post',
+            contentType: 'application/json; charet=utf-8',
+            data: "{id:" + id + "}",
+            dataType: 'json',
+            async: false,
+            success: function (data) {
+                for (var i = 0; i < data.length; i++) {
+                    var field_attr = {};
+                    field_attr.id = data[i].id;
+                    field_attr.ismandatory = data[i].field_mandatory;
+                    field_attr.field_type = data[i].field_type;
+                    field_attr.field_name = data[i].field_name;
+                    field_attr.label_show = data[i].label_show;
+                    field_attr.form_id = id;
+                    dynamic_ids.push(field_attr);
+                    var inputelement;
+                    var ismandat = ' <span>&nbsp;</span>';
+                    if (data[i].field_mandatory == "Yes") {
+                        ismandat = ' <span class="mandatory">*</span>';
+                        mandatorydynamic_fields.push({
+                            Id: data[i].id,
+                            Type: data[i].field_type,
+                            fieldname: data[i].field_name
+                        });
+                    }
+                    if (data[i].field_type == "Textbox") {
+                        inputelement = '<label for="exampleInputEmail1">' + data[i].label_show + ismandat + '</label><input type="text" name="' + data[i].field_name + '" class="form-control" id="' + data[i].id + '"/>';
+                    }
+                    else if (data[i].field_type == "Dropdown") {
+                        inputelement = '<label for="exampleInputEmail1">' + data[i].label_show + ismandat+ '</label><select class="form-control" name="' + data[i].field_name + '" id="' + data[i].id + '">';
+                        var ddloptions = data[i].options.split(',');
+                        for (var j = 0; j < ddloptions.length; j++) {
+                            inputelement = inputelement + '<option value="' + ddloptions[j] + '">' + ddloptions[j] + '</option>';
+                        }
+                        inputelement = inputelement + '</select>';
+                    }
+                    else if (data[i].field_type == "Checkbox") {
+                        //inputelement = '<input type="checkbox" name="' + data[i].field_name + '" id="' + data[i].id + '"/><label for="exampleInputEmail1">' + data[i].field_name + '</label>';
+                        inputelement = "<b>" + data[i].label_show + ismandat +"</b><br />";
+
+                        var chkoptions = data[i].options.split(',');
+                        for (var j = 0; j < chkoptions.length; j++) {
+                            inputelement = inputelement + '<input type="checkbox"  name="' + data[i].field_name + '" id="' + "chk" + chkoptions[j] + j + '"/><label for="exampleInputEmail1">' + chkoptions[j] + '</label>';
+                        }
+                    }
+                    else if (data[i].field_type == "Radio") {
+                        //inputelement = '<input type="Radio" name="' + data[i].field_name + '" id="' + data[i].id + '"/><label for="exampleInputEmail1">' + data[i].field_name + '</label>';
+                        inputelement = "<b>" + data[i].label_show + ismandat+ "</b><br />";
+                        var rdboptions = data[i].options.split(',');
+                        for (var j = 0; j < rdboptions.length; j++) {
+                            inputelement = inputelement + '<input type="Radio"  name="' + data[i].field_name + '" id="' + "rdb" + rdboptions[j] + j + '"/><label for="exampleInputEmail1">' + rdboptions[j] + '</label>';
+                        }
+                    }
+                    else if (data[i].field_type == "Textarea") {
+                        inputelement = '<label for="exampleInputEmail1">' + data[i].label_show + ismandat+ '</label><textarea class="form-control" name="' + data[i].field_name + '" id="' + data[i].id + '"></textarea>';
+                        //inputelement = "<b>" + data[i].field_name + "</b><br />";
+                        //var rdboptions = data[i].options.split(',');
+                        //for (var j = 0; j < rdboptions.length; j++) {
+                        //    inputelement = inputelement + '<input type="Radio"  name="' + data[i].field_name + '" id="' + "rdb" + rdboptions[j] + j + '"/><label for="exampleInputEmail1">' + rdboptions[j] + '</label>';
+                        //}
+                    }
+                    $('#main-form').append('<div class="col-md-6"><div class="form-group">' + inputelement + '</div></div>');
+                    //$('#main-form').append('<div class="col-md-12"><div class="form-group">' + inputelement + '</div></div>');
+                }
+
+
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        });
+        console.log('All ids :' + dynamic_ids);
+    }
+
+    function GetValueFromElement(id, type, ismandatory, name) {
+        if (type == "Textbox") {
+            if (ismandatory == "Yes") {
+                if ($('#' + id).val() == "") {
+                    // alert('Please enter ' + name);
+                    toastr.error('Please fill all mandatory fields.');
+                    $('#' + id).focus();
+                    return 'invalid';
+                }
+                else {
+                    return $('#' + id).val();
+                }
+            }
+            else {
+                return $('#' + id).val();
+            }
+        }
+        if (type == "Dropdown") {
+            if (ismandatory == "Yes") {
+                if ($('#' + id).val() == "") {
+                    toastr.error('Please fill all mandatory fields.');
+                    $('#' + id).focus();
+                    return 'invalid';
+                }
+                else {
+                    return $('#' + id + " option:selected").val();
+                }
+            }
+            else {
+                return $('#' + id + " option:selected").val();
+            }
+        }
+        if (type == "Radio" || type == "Checkbox") {
+            if (ismandatory == "Yes") {
+                if ($('#' + id).prop('checked') == false) {
+                    toastr.error('Please fill all mandatory fields.');
+                    $('#' + id).focus();
+                    return 'invalid';
+                }
+                else {
+                    return "Yes";
+                }
+            }
+            else {
+                return ($('#' + id).prop('checked') == false ? "No" : "Yes");
+            }
+        }
+        if (type == "Textarea") {
+            if (ismandatory == "Yes") {
+                if ($('#' + id).val() == "") {
+                    toastr.error('Please fill all mandatory fields.');
+                    $('#' + id).focus();
+                    return 'invalid';
+                }
+                else {
+                    return $('#' + id).val();
+                }
+            }
+            else {
+                return $('#' + id).val();
+            }
+        }
+    }
+
+    function CheckForEdit() {
+
+        $.ajax({
+            url: '/Innovation/Campaign/GetIdea',
+            type: 'post',
+            contentType: 'application/json; charet=utf-8',
+            dataType: 'json',
+            async: false,
+            success: function (data) {
+                if (data.Id != 0) {
+
+                    var CurrentDate = new Date().format("mm/dd/yyyy");
+                    var dateTimeperiod = data.TimePeriod;
+                    var nowDate = new Date(parseInt(dateTimeperiod.substr(6)));
+                    var result = "";
+                    result += nowDate.format("mm/dd/yyyy");
+                    if (CurrentDate > result) {
+                       // $("#btnSubmit").attr("disabled", true);
+
+                    }
+                    GetFormFields(data.fomrid);
+                }
+
+            },
+            error: function (data) { }
+        });
+    }
+    function RemoveFile(id) {
+        $.ajax({
+            url: '/Innovation/Campaign/RemoveFile',
+            type: 'post',
+            contentType: 'application/json; charet=utf-8',
+            data: "{id:" + id + "}",
+            dataType: 'json',
+            async: false,
+            success: function (data) {
+                window.location.href = "CampaignIdeaSubmission";
+            },
+            error: function () { }
+        });
+    }
+</script>
+
+
+

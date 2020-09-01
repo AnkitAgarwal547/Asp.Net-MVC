@@ -1,0 +1,635 @@
+﻿@model ViewModel.ViewModel_EvaluationStage
+@{
+    ViewBag.Title = "EvaluationStage";
+    Layout = "~/Views/Shared/_InnovationLayout.cshtml";
+}
+
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0 text-dark">Create Campaign</h1>
+            </div><!-- /.col -->
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="/Innovation/Dashboard">Home</a></li>
+                    <li class="breadcrumb-item active">Create Campaign</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+
+                <div class="card campaignBox">
+                    <div class="card-body">
+                        <div class="col-md-12" style="margin-bottom:55px;">
+                            <h5 style="text-transform:uppercase;">Campaign Process</h5>
+                        </div>
+                        <div id="smartwizard2" class="sw-main sw-theme-default">
+                            <ul class="nav nav-tabs step-anchor" id="navigation">
+                                <li class="nav-item done"><a href="Campaigninfo" class="nav-link"><small></small>Step 1</a></li>
+                                <li class="nav-item done"><a href="CampaignIdeaSubmission" class="nav-link"><small></small>Step 2</a></li>
+                                <li class="nav-item done"><a href="SocialStage" class="nav-link"><small></small>Step 3</a></li>
+                                <li class="nav-item active"><a href="javascript:void(0);" class="nav-link"><small></small>Step 4</a></li>
+                                <li class="nav-item"><a href="javascript:void(0);" class="nav-link"><small></small>Step 5</a></li>
+                                <li class="nav-item"><a href="javascript:void(0);" class="nav-link"><small></small>Step 6</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-md-12">
+                            <h5 class="stripBG" style="text-transform:uppercase;">EVALUATION STAGE</h5>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-2">
+                                <div id="accordion" role="tablist">
+                                    <div class="card" id="readymade-forms">
+                                        <div class="card-header" role="tab" id="headingOne">
+                                            <h5 class="mb-0">
+                                                <a data-toggle="collapse" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                                    Choose Ready To Use Form
+                                                </a>
+                                            </h5>
+                                        </div>
+
+                                        <div id="collapseOne" class="collapse show" role="tabpanel" aria-labelledby="headingOne">
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-md-6 mb-3" id="new-form">
+                                                        <a href="javascript:void 0" class="selectForm">Create New Form <i class="fa fa-plus-circle" aria-hidden="true"></i></a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-8 mb-2">
+
+                                <div class="formShow2 " id="form1" style="display: block;">
+                                    @*<h2>EVALUATION STAGE</h2>*@
+                                    <form>
+                                        <div class="row">
+
+                                            <div class="col-md-12">
+                                                <div class="">
+                                                    <label class="custom-check-label" for="reallow"><input type="checkbox" id="AllowReopening" /> Alllow Re-Opening of Idea(In case of Rejection)</label>
+                                                </div>
+                                                <div class="">
+                                                    <label class="custom-check-label" for="reallow"><input type="checkbox" id="AllowRecommendations" />Allow Recommendation</label>
+                                                </div>
+
+                                                <p><a href="#" class="clickHere"> Click Here</a> to view Evaluator Team and Evaluator Chief.</p>
+                                            </div>
+
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label>Select Maximum Time Period for Evaluation<span class="mandatory">*</span></label>
+                                                    <input type="hidden" id="hdf" value="@ViewBag.EndDate" />
+                                                    <input type="hidden" value="@ViewBag.StartDate" id="hdfstrat" />
+                                                    @Html.TextBoxFor(x => x.EvaluationTimePeriod, new { @class = "form-control", @readonly = "readonly" })
+
+
+                                                </div>                                               
+                                            </div>
+
+                                        </div>
+                                        <div class="readOnlyFields">
+                                            <h3>Comment Field for Evaluator</h3>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <label for="exampleInputEmail1">Comment</label>
+                                                        @Html.TextAreaFor(x => x.Comments, new { @class = "form-control", disabled = "disabled" })
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row" id="main-form">
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="formShow1 hidden" id="custom-form">
+                                    <h2>New Form</h2>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Form Name <span class="mandatory">*</span></label>
+                                            <input type="text" id="formname" class="form-control" placeholder="enter form name" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Field Name <span class="mandatory">*</span></label>
+                                            <input type="text" id="inputtype" class="form-control" placeholder="enter name" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Select Field Type</label>
+                                            <select id="controls" class="form-control">
+                                                <option>Textbox</option>
+                                                <option>Dropdown</option>
+                                                <option>Checkbox</option>
+                                                <option>Radio</option>
+                                                <option>Textarea</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 hidden" id="txtarea">
+                                        <div class="form-group">
+                                            <label>Add Field Values     <span class="mandatory">*</span></label>
+                                            <textarea id="options" class="form-control"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <input type="checkbox" id="cbk_ismandatory" /> Is mandatory
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <input type="button" class="btn btn-primary" id="btnAdd" value="Add" />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <table class="table table-bordered" id="customelement">
+                                            <thead>
+                                                <tr>
+                                                    <th>Input field name</th>
+                                                    <th>Input type</th>
+                                                    <th>Options</th>
+                                                    <th>Is manadatory</th>
+                                                    <th>Remove</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+
+                                        <input type="button" class="btn btn-primary" value="Save From" id="btnSave" />
+                                        <input type="button" class="btn btn-danger" value="Cancel" id="btnCancel" />
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="col-md-12">
+                                    <div class="form-group repeatBtns">
+                                        <button class="btn btn-primary" onclick="AddNewSection();">Repeat this step</button>
+                                        <button class="btn btn-secondary sw-btn-next" type="button" id="btnSkip">Skip</button>
+
+                                        <input type="button" value="Next" class="continueBtn" id="btnSubmit" />
+                                    </div>
+                                </div>
+                                @*<div class="form-group">
+                    <input type="button" value="Next" class="continueBtn" id="btnSubmit" />
+                    <input type="button" value="Previous" style="display:none;" class="previousBtn" id="btnPrevious" />
+                    <input type="button" value="Skip this Step" class="skipButton" id="btnskip" />
+                </div>*@
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+            </div>
+        </div>
+        <!-- /.row -->
+    </div><!-- /.container-fluid -->
+</div>
+
+<script>
+    var dynamic_ids = new Array();
+    var _formId;
+    var mandatorydynamic_fields = [];
+    var step = new Array();
+    window.addEventListener('DOMContentLoaded', function () {
+        (function ($) {
+            //do something with b-lazy plugin, lightbox plugin and then with flexslider
+        })(jQuery);
+
+    });
+    $(document).ready(function () {
+        $('#link_camprole').addClass('active');
+        debugger;
+        var e = $("#hdf").val();
+        var s = $("#hdfstrat").val();
+        $("#EvaluationTimePeriod").datepicker({
+            minDate: s,
+            maxDate: e
+        });
+
+        SetNavigation();
+
+        CheckForEdit();
+
+        $('#new-form').click(function () {
+            debugger;
+            $('#custom-form').removeClass('hidden');
+            $('#form1').addClass('hidden');
+        });
+        $('#btnCancel').click(function () {
+            $('#custom-form').addClass('hidden');
+            $('#form1').removeClass('hidden');
+        });
+        //$('#btnskip').click(function () {
+        //    window.location.href = "ImplementationStage";
+        //});
+        $('#controls').change(function () {
+            if ($('#controls option:selected').val() == "Dropdown") {
+                $('#options').removeClass('hidden');
+            }
+            else {
+                $('#options').addClass('hidden');
+                $('#options').val('');
+            }
+        });
+        $('#btnAdd').click(function () {
+
+            if ($('#formname').val() == "" || $('#inputtype').val() == "") {
+                toastr.error('Please fill all mandatory fields.');
+                return false;
+            }
+
+            var duplicatename = checkName($('#inputtype').val());
+            if (duplicatename == true) {
+                toastr.error('Name can not be duplicate');
+                return false;
+            }
+
+
+
+            var options = Field();
+            if ($('#options').attr('class') == "") {
+                if (options == false) {
+                    return false;
+                }
+            }
+
+            $('#customelement').append('<tr><td>' + $('#inputtype').val() + '</td><td>' + $('#controls option:selected').val() + '</td><td>' + options + '</td><td>' + ($('#cbk_ismandatory').prop("checked") == true ? 'Yes' : 'No') + '</td><td><input type="button" class="btn btn-danger" value="Remove" onclick="Remove(this)"/></td></tr>');
+            $('#inputtype').val('');
+            $('#cbk_ismandatory').removeAttr("checked");
+        });
+        $('#btnPrevious').click(function () {
+            window.location.href = "SocialStage";
+        })
+        $('#btnSave').click(function () {
+
+            if ($('#customelement tbody tr').length <= 0) {
+                toastr.error('No data found to save');
+                return false;
+            }
+
+            var models = new Array();
+
+            $('#customelement tbody tr').each(function () {
+                var row = $(this);
+                var _formData = {};
+                if (row[0].rowIndex > 0) {
+                    _formData.field_name = row.find('td').eq(0).html();
+                    _formData.field_type = row.find('td').eq(1).html();
+                    _formData.options = row.find('td').eq(2).html();
+                    _formData.field_mandatory = row.find('td').eq(3).html();
+                    _formData.innovationid = 1;
+                    _formData.form_name = $('#formname').val();
+                    models.push(_formData);
+                }
+            });
+            debugger;
+            $.ajax({
+                url: '/Innovation/Campaign/SaveForm',
+                type: 'post',
+                contentType: 'application/json; charet=utf-8',
+                data: JSON.stringify(models),
+                dataType: 'json',
+                success: function (data) {
+                    toastr.success('Form saved successfully.');
+                    setTimeout(location.reload(), 5000);
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+            });
+        });
+        GetAllRadyMadeForms();
+
+        $('#btnSubmit').click(function () {
+            debugger;
+
+
+            //--------------Permanant fields-----------
+            //var models = new Array();
+
+            if ($('#EvaluationTimePeriod').val() == '') {
+                toastr.error('Please fill all mandatory fields.');
+                return false;
+            }
+
+            var _formData = {};
+            _formData.AllowRecommendations = $('#AllowRecommendations').prop('checked');
+            _formData.AllowReopening = $('#AllowReopening').prop('checked');;
+            _formData.EvaluationTimePeriod = $('#EvaluationTimePeriod').val();
+            _formData.formid = _formId;
+
+            //--------------Additional fields----------
+            $.ajax({
+                url: '/Innovation/Campaign/SubmitEvaluation',
+                type: 'post',
+                contentType: 'application/json; charet=utf-8',
+                data: JSON.stringify(_formData),
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data);
+                    toastr.success('Form saved successfully.');
+                    setTimeout(window.location.href = "ImplementationStage", 5000);
+                    //window.location.href = "ImplementationStage";
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+            });
+        });
+
+        $('#btnSkip').click(function () {
+            $.ajax({
+                url: '/Innovation/Campaign/CampaignSkipStep',
+                type: 'post',
+                contentType: 'application/json; charet=utf-8',
+                data: '{step:4}',
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data);
+                    toastr.success('Step Skipped');
+                    window.location = "/Innovation/Campaign/ImplementationStage";
+                },
+                error: function () {
+                    alert("Error while inserting data");
+                }
+            });
+
+
+        });
+    });
+    function Field() {
+        debugger;
+        if ($('#options').attr('class') == "") {
+            if ($('#options').val() == "") {
+                alert('Please enter options');
+                $('#options').focus();
+                return false;
+            }
+        }
+
+        var arr = new Array();
+        arr = $('#options').val().split("\n");
+
+        return arr;
+    }
+
+    function Remove(thisref) {
+        debugger;
+        thisref.parentElement.parentElement.remove();
+    }
+
+    function checkName(name) {
+        debugger;
+        var ststus = false;
+        $('#customelement tbody tr').each(function () {
+            debugger;
+            var row = $(this);
+            var existing_name = row.find('td').eq(0).html();
+            if (name == existing_name) {
+                ststus = true;
+            }
+        });
+        return ststus;
+    }
+
+    function GetAllRadyMadeForms() {
+        $.ajax({
+            url: '/Innovation/Campaign/GetForms',
+            type: 'post',
+            contentType: 'application/json; charet=utf-8',
+            data: "{UserId:1}",
+            dataType: 'json',
+            success: function (data) {
+                console.log(data);
+                //$('#readymade-forms').empty();
+                //$('#readymade-forms').append('<div class="row"><div class="col-md-7" id="new-form"><a href="javascript:void 0" class="selectForm">Create New Form <i class="fa fa-plus-circle" aria-hidden="true"></i></a></div></div>');
+                for (var i = 0; i < data.length; i++) {
+                    $('#readymade-forms .row').append('<div class="col-md-6 mb-3" onclick="GetFormFields(' + data[i].id + ')" id="new-form-' + data[i].id + '"><a href="javascript:void 0" class="selectForm">' + data[i].form_name + ' <i class="fa fa-plus-circle" aria-hidden="true"></i></a></div>');
+                }
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        });
+
+    }
+
+    function GetFormFields(id) {
+        _formId = id;
+        debugger;
+        $('#main-form').empty();
+        dynamic_ids.length = 0;
+        $.ajax({
+            url: '/Innovation/Campaign/GetFormsFields',
+            type: 'post',
+            contentType: 'application/json; charet=utf-8',
+            data: "{id:" + id + "}",
+            dataType: 'json',
+            async: false,
+            success: function (data) {
+                debugger;
+
+                for (var i = 0; i < data.length; i++) {
+                    var field_attr = {};
+                    field_attr.id = data[i].id;
+                    field_attr.ismandatory = data[i].field_mandatory;
+                    field_attr.field_type = data[i].field_type;
+                    field_attr.field_name = data[i].field_name;
+                    field_attr.form_id = id;
+                    dynamic_ids.push(field_attr);
+                    var inputelement;
+                    if (data[i].field_type == "Textbox") {
+                        inputelement = '<label for="exampleInputEmail1">' + data[i].field_name + '</label><input type="text" name="' + data[i].field_name + '" class="form-control" id="' + data[i].id + '"/>';
+                    }
+                    else if (data[i].field_type == "Dropdown") {
+                        inputelement = '<label for="exampleInputEmail1">' + data[i].field_name + '</label><select class="form-control" name="' + data[i].field_name + '" id="' + data[i].id + '">';
+                        var ddloptions = data[i].options.split(',');
+                        for (var j = 0; j < ddloptions.length; j++) {
+                            inputelement = inputelement + '<option value="' + ddloptions[j] + '">' + ddloptions[j] + '</option>';
+                        }
+                        inputelement = inputelement + '</select>';
+                    }
+                    else if (data[i].field_type == "Checkbox") {
+                        //inputelement = '<input type="checkbox" name="' + data[i].field_name + '" id="' + data[i].id + '"/><label for="exampleInputEmail1">' + data[i].field_name + '</label>';
+                        inputelement = "<b>" + data[i].field_name + "</b><br />";
+
+                        var chkoptions = data[i].options.split(',');
+                        for (var j = 0; j < chkoptions.length; j++) {
+                            inputelement = inputelement + '<input type="checkbox"  name="' + data[i].field_name + '" id="' + "chk" + chkoptions[j] + j + '"/><label for="exampleInputEmail1">' + chkoptions[j] + '</label>';
+                        }
+                    }
+                    else if (data[i].field_type == "Radio") {
+                        //inputelement = '<input type="Radio" name="' + data[i].field_name + '" id="' + data[i].id + '"/><label for="exampleInputEmail1">' + data[i].field_name + '</label>';
+                        inputelement = "<b>" + data[i].field_name + "</b><br />";
+                        var rdboptions = data[i].options.split(',');
+                        for (var j = 0; j < rdboptions.length; j++) {
+                            inputelement = inputelement + '<input type="Radio"  name="' + data[i].field_name + '" id="' + "rdb" + rdboptions[j] + j + '"/><label for="exampleInputEmail1">' + rdboptions[j] + '</label>';
+                        }
+                    }
+                    else if (data[i].field_type == "Textarea") {
+                        inputelement = '<label for="exampleInputEmail1">' + data[i].field_name + '</label><textarea class="form-control" name="' + data[i].field_name + '" id="' + data[i].id + '"></textarea>';
+                    }
+                    $('#main-form').append('<div class="col-md-6"><div class="form-group">' + inputelement + '</div></div>');
+                    //$('#main-form').append('<div class="col-md-12"><div class="form-group">' + inputelement + '</div></div>');
+                }
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        });
+        debugger;
+        console.log('All ids :' + dynamic_ids);
+    }
+
+    function GetValueFromElement(id, type, ismandatory, name) {
+        if (type == "Textbox") {
+            if (ismandatory == "Yes") {
+                if ($('#' + id).val() == "") {
+                    alert('Please enter ' + name);
+                    $('#' + id).focus();
+                    return 'invalid';
+                }
+                else {
+                    return $('#' + id).val();
+                }
+            }
+            else {
+                return $('#' + id).val();
+            }
+        }
+        if (type == "Dropdown") {
+            if (ismandatory == "Yes") {
+                if ($('#' + id).val() == "") {
+                    alert('Please enter ' + name);
+                    $('#' + id).focus();
+                    return 'invalid';
+                }
+                else {
+                    return $('#' + id + " option:selected").val();
+                }
+            }
+            else {
+                return $('#' + id + " option:selected").val();
+            }
+        }
+        if (type == "Radio" || type == "Checkbox") {
+            if (ismandatory == "Yes") {
+                if ($('#' + id).prop('checked') == false) {
+                    alert('Please check ' + name);
+                    $('#' + id).focus();
+                    return 'invalid';
+                }
+                else {
+                    return "Yes";
+                }
+            }
+            else {
+                return ($('#' + id).prop('checked') == false ? "No" : "Yes");
+            }
+        }
+        if (type == "Textarea") {
+            if (ismandatory == "Yes") {
+                if ($('#' + id).val() == "") {
+                    alert('Please enter ' + name);
+                    $('#' + id).focus();
+                    return 'invalid';
+                }
+                else {
+                    return $('#' + id).val();
+                }
+            }
+            else {
+                return $('#' + id).val();
+            }
+        }
+    }
+
+    function CheckForEdit() {
+        // debugger;
+        $.ajax({
+            url: '/Innovation/Campaign/GetEvaluation',
+            type: 'post',
+            contentType: 'application/json; charet=utf-8',
+            dataType: 'json',
+            async: false,
+            success: function (data) {
+                debugger;
+                console.log(data);
+                if (data.Id != 0) {
+                    var date = data.EvaluationTimePeriod;
+                    var nowDate = new Date(parseInt(date.substr(6)));
+                    var result = "";
+                    result += nowDate.format("mm/dd/yyyy");
+
+                    $('#EvaluationTimePeriod').val(result);
+
+                    $('#AllowReopening').attr("checked", (data.AllowReopening == 1 ? true : false));
+                    $('#AllowRecommendations').attr("checked", (data.AllowRecommendations == 1 ? true : false));
+
+                    GetFormFields(data.formid)
+                    //;
+                    //formid
+                }
+            },
+            error: function (data) { }
+        });
+    }
+
+    function SetNavigation() {
+
+
+        $.ajax({
+            url: '/Innovation/Campaign/GetCampaignSteps',
+            type: 'post',
+            contentType: 'application/json; charet=utf-8',
+            dataType: 'json',
+            async: false,
+            success: function (data) {
+
+                for (var i = 0; i < data.length; i++) {
+                    var st = {};
+                    st.step = data[i].step;
+                    st.class = data[i]._class;
+                    step.push(st);
+                }
+
+                $('#navigation li').each(function () {
+                    debugger;
+                    var nav = $(this);
+                    if (nav.index() != 3) {
+                        $(nav).removeClass('active');
+                        $(nav).removeClass('done');
+
+
+                        if (nav.index() == 5) {
+                            $(nav).addClass(step[nav.index() + 1].class);
+                        }
+                        else {
+                            $(nav).addClass(step[nav.index()].class);
+                        }
+                    }
+                });
+            },
+            error: function (data) { }
+        });
+
+
+    }
+</script>

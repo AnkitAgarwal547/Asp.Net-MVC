@@ -1,0 +1,506 @@
+﻿@model ViewModel.ViewModel_Campaign
+@{
+    ViewBag.Title = "Create Campaign";
+    Layout = "~/Views/Shared/_InnovationLayout.cshtml";
+}
+<!-- Content Header (Page header) -->
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0 text-dark">Create Campaign</h1>
+            </div><!-- /.col -->
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="/Innovation/Dashboard">Home</a></li>
+                    <li class="breadcrumb-item active">Create Campaign</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Main content -->
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+
+                <div class="card campaignBox">
+                    <div class="card-body">
+                        <div class="col-md-12" style="margin-bottom:55px;">
+                            <h5 style="text-transform:uppercase;">Campaign Process</h5>
+                        </div>
+                        <div id="smartwizard2" class="sw-main sw-theme-default">
+                            <ul class="nav nav-tabs step-anchor" id="navigation">
+                                <li class="nav-item active"><a href="javascript:void(0);" class="nav-link"><small></small>Step 1</a></li>
+                                <li class="nav-item"><a href="/Innovation/Campaign/CampaignIdeaSubmission" class="nav-link"><small></small>Step 2</a></li>
+                                <li class="nav-item"><a href="/Innovation/Campaign/SocialStage" class="nav-link"><small></small>Step 3</a></li>
+                                <li class="nav-item"><a href="/Innovation/Campaign/EvaluationStage" class="nav-link"><small></small>Step 4</a></li>
+                                <li class="nav-item"><a href="/Innovation/Campaign/ImplementationStage" class="nav-link"><small></small>Step 5</a></li>
+
+
+                                @if (ViewBag.Isalloewd != null)
+                                {
+                                    if (Convert.ToInt32(ViewBag.Isalloewd) > 0)
+                                    {
+                                        <li class="nav-item"><a href="/Innovation/Campaign/Audit" class="nav-link"><small></small>Step 6</a></li>
+                                        <li class="nav-item"><a href="/Innovation/Campaign/RewardStage" class="nav-link"><small></small>Step 7</a></li>
+                                    }
+                                    else
+                                    {
+                                        <li class="nav-item"><a href="/Innovation/Campaign/RewardStage" class="nav-link"><small></small>Step 6</a></li>
+                                    }
+                                }
+                                else
+                                {
+                                    <li class="nav-item"><a href="/Innovation/Campaign/RewardStage" class="nav-link"><small></small>Step 6</a></li>
+                                }
+
+                            </ul>
+                        </div>
+
+                        @using (@Html.BeginForm("CampaignInfo", "Campaign", FormMethod.Post, new { @id = "form1", @enctype = "multipart/form-data" }))
+                        {
+                            @Html.HiddenFor(x => x.Id)                           
+                            <input type="hidden" id="cmpId" value="@Model.Id" />
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h5 class="stripBG" style="text-transform:uppercase;">Campaign Information</h5>
+                                </div>
+                                @Html.HiddenFor(x => x.TargetUsers)
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Campaign Title <span class="mandatory">*</span></label>
+                                        @Html.TextBoxFor(x => x.Name, new { @class = "form-control" })
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Description <span class="mandatory">*</span></label>
+                                        @Html.TextAreaFor(x => x.Description, new { @class = "form-control", @rows = 5 })
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Main Image (For Banner) <span class="mandatory">*</span></label>
+                                        @Html.TextBoxFor(x => x.PrimaryImage, new { @class = "form-control", @type = "file" })
+
+                                        @if (Model.MyCampaignPrimaryImages != null)
+                                        {
+
+                                            foreach (var item in Model.MyCampaignPrimaryImages)
+                                            {
+                                                <div id="imageDiv_primary" style="margin-bottom:10px;">
+                                                    <img src="@item.ImagePath" style="width:100px;" />
+                                                    @*<a href="javascript:void(0);" class="delImage" data-imageId="@item.Id">x</a>*@
+                                                </div>
+                                            }
+                                        }
+                                        @*<p id="lblPrimaryImagePath" style="display:none">@(Model.MyCampaignPrimaryImages.FirstOrDefault().ImagePath.ToString().Replace("/Images/CustomerLogo/",""))</p>*@
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Additional Image (Multiple Images)</label>
+                                        <div class="owl-carousel campaign-slider owl-slider">
+                                            @if (Model.MyCampaignImages != null)
+                                            {
+                                                    foreach (var item in Model.MyCampaignImages)
+                                                    {
+
+                                                        <div id="imageDiv" style="float: left;">
+                                                            <img src="@item.ImagePath" style="width:100px;" />
+                                                            <a href="javascript:void(0);" class="delImage" data-imageId="@item.Id">x</a>
+                                                        </div>
+                                                    }
+                                            }
+                                        </div>
+                                        @Html.TextBoxFor(x => x.AdditionalImages, new { @class = "form-control", @type = "file", @multiple = "true" })
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Attachment</label>
+                                        @Html.TextBoxFor(x => x.Attechment, new { @class = "form-control", @type = "file" })
+                                        <br />
+                                        @if (Model.Attechment != null)
+                                        {
+                                            
+                                        <div id="aAttechMent">
+                                            <p id="lblPrimaryImagePath" class="attechmentname"></p>
+                                            <a href="@Model.Attechment" target="_blank">Click to view attachmet</a>&nbsp;&nbsp;&nbsp;
+                                            <a href="javascript:void(0);" class="delAttechment" data-imageId="@Model.Id">x</a>
+                                        </div>
+                                            <Script type="text/javascript">
+                                                $("#Attechment").addClass("clolorTrans");
+                                            </Script>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Campaign Manager <span class="mandatory">*</span></label>
+                                        @Html.DropDownListFor(x => x.ManagerId, new SelectList(Model.MyTeams, "Id", "Name"), "Select Manager", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Select Target User <span class="mandatory">*</span></label>
+                                        <select id="TargetUsers1" multiple="multiple" required name="mySkillsName">
+                                            @if (Model.MyTeams != null)
+                                            {
+                                                foreach (var item in Model.MyTeams)
+                                                {
+                                                    if (item.Name != null)
+                                                    {
+                                                        <option selected="selected" value="@item.Id">
+                                                            @item.Name
+                                                        </option>
+                                                    }
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label> Start Date <span class="mandatory">*</span></label>
+                                        @Html.TextBoxFor(x => x.StartDate, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label> End Date <span class="mandatory">*</span></label>
+                                        @Html.TextBoxFor(x => x.EndDate, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6 notificationText">
+                                    @Html.CheckBoxFor(x => x.EmailNotification)<label for="EmailNotification">&nbsp; Email Notification for this campaign</label>
+                                </div>
+                                <div class="col-md-6 notificationText">
+                                    @Html.CheckBoxFor(x => x.SMSNotification)<label for="SMSNotification">&nbsp; SMS  Notification for this campaign</label>
+                                </div>
+                                <div class="col-md-12">
+                                    <input type="submit" class="continueBtn" value="Next" onclick="return CheckValidation();" />
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                @if (TempData["Campiagnerr"] != null)
+                {
+                <script type="text/javascript">
+                    window.onload = function () {
+                        toastr.error("Campaign already exists.");
+                    
+                };
+                </script>
+                }
+            </div>
+        </div>
+        <!-- /.row -->
+    </div><!-- /.container-fluid -->
+</div>
+<!-- /.content -->
+<style>
+    .delAttechment {
+        color: red !important;
+        font-weight: bold;
+    }
+    .attechmentname {
+        margin-top: 11px;
+        position: absolute;
+        margin-left: 126px;
+        display: inline-flex !important;
+    }
+    .clolorTrans {
+        color: transparent !important;
+    }
+</style>
+@section Scripts
+{
+    <script type="text/javascript">
+        var step = new Array();
+        $(document).ready(function () {
+             @*var primaryImage = "@Html.Raw(Model.MyCampaignPrimaryImages)";
+            if (primaryImage != "") {
+                $("#lblPrimaryImagePath").addClass("attechmentname");
+                $("#PrimaryImage").addClass("clolorTrans");
+            }*@
+
+            $('#link_managercamp').addClass('active');
+
+            SetNavigation(@Html.Raw(Model.Id));
+
+            $('#navigation li').each(function () {
+                var temp = $(this);
+                if (temp.hasClass('done') == false) {
+                    temp[0].children[0].href = 'javascript:void 0';
+                }
+            });
+
+            ManageTU();
+        });
+        function CheckValidation() {
+            debugger;
+            $('#loader').removeClass('hidden');
+            var isprimaryimage = false;
+            $('#imageDiv_primary').each(function () {
+                debugger;
+                var ref = $(this);
+                if (ref.length > 0) {
+                    isprimaryimage = true;
+                }
+            });
+
+            $("#TargetUsers").val($("#TargetUsers1").val())
+
+            var Name = $("#Name").val().trim();
+            var Description = $("#Description").val().trim();
+
+            var PrimaryImage = 1;
+
+            if (isprimaryimage == false) {
+                PrimaryImage = $('#PrimaryImage').get(0).files.length;
+            }
+
+
+            var AdditionalImages = $('#AdditionalImages').get(0).files.length;
+            var ManagerId = $("#ManagerId :selected").val();
+            var StartDate = $("#StartDate").val().trim();
+            var EndDate = $("#EndDate").val().trim();
+            var targetuser = $("#TargetUsers1").val();
+            var ManagerId = $("#ManagerId :selected").val();
+            if (Name == "" || Description == "" || PrimaryImage == 0 || StartDate == "" || EndDate == "" || ManagerId == "") {
+                toastr.error('Please fill all mandatory fields.');
+                $('#loader').addClass('hidden');
+                return false;
+            }
+            
+            else if (Name != "")
+            {
+
+                var isCampaginNameExists = CheckCampaginName();
+                //var isCampaginNameExists = false;
+                if (isCampaginNameExists == true) {
+                    toastr.error('Campaign name already exists.');
+                    $('#loader').addClass('hidden');
+                    return false;
+                }
+                else {
+                    return true;
+                }
+
+            }
+            else if (ManagerId != null) {
+                for (var i = 0; i < targetuser.length; i++) {
+                    if (ManagerId == targetuser[i]) {
+                       // $('#TargetUsers1').multiselect('deselect', [ManagerId]);
+                        toastr.error('Campagin manager can not be target user.');
+                        $('#loader').addClass('hidden');
+                        return false;
+                    }
+                }
+            }
+            else {
+                if (isprimaryimage == false) {
+                    var allowedFiles = [".jpeg", ".jpg", ".png", "jpeg", "jpg", "png"];
+                    var regex = new RegExp("([a-zA-Z0-9\s_\\.\-:])+(" + allowedFiles.join('|') + ")$");
+                    var file = $('#PrimaryImage');
+                    if (!regex.test(file.val().toLowerCase())) {
+                        toastr.error('Please upload files having extensions: ' + allowedFiles.join(' , ') + ' only');
+                        $('#loader').addClass('hidden');
+                        return false;
+                    } else {
+                        if (AdditionalImages > 0) {
+                            if (!regex.test($('#AdditionalImages').val().toLowerCase())) {
+                                toastr.error('Please upload files having extensions: ' + allowedFiles.join(' , ') + ' only in Additional Images.');
+                                $('#loader').addClass('hidden');
+                                return false;
+                            }
+                            else {
+                                return true;
+                            }
+                        }
+                    }
+                    
+                }
+               
+            }
+           
+        }
+
+        function AddNewSection() {
+            var bb = $('#div1').clone();
+            $('.package').append(bb);
+        }
+        function CheckCampaginName()
+        {
+            var retval
+            var campaginname = $("#Name").val().trim();
+            var campId = $("#cmpId").val();
+            $.ajax({
+                url: '/Innovation/Campaign/CheckCampaginName',
+                type: 'post',
+                dataType: 'json',
+                data: { "campname": campaginname, "campId": campId },
+                async: false,
+                success: function (data) {
+                    retval = data;
+                },
+                error: function () { }
+            });
+            return retval;
+
+        }
+
+        $('a.delImage').click(function () {
+            var imageId = $(this).attr("data-imageId");
+            var div = $(this);
+            $.post('/Innovation/Campaign/CampaignDeleteImage', { Id: imageId },
+                function (returnedData) {
+                    div.parent().remove();
+                });
+        });
+
+          $('a.delAttechment').click(function () {
+            var conf = confirm('Are you sure you want to delete this attacment')
+            if (conf) {
+                var imageId = $(this).attr("data-imageId");
+                var div = $(this);
+                $.post('/Innovation/Campaign/CampaignDeleteAttachment', { Id: imageId })
+                    .done(function (returnedData) {
+                        $("#aAttechMent").css('display', 'none');
+                    });
+            }
+        });
+        $('#btnsave').click(function () {
+            var model = new Array();
+
+            $('.effect1').each(function () {
+                var row = $(this);
+                var _formdata = {};
+                console.log(row.find("#chkComments").prop("checked") == true);
+                console.log(row.find("#chkAllowVoting").prop("checked") == true);
+                console.log(row.find("#ddlTimePeriod :selected").val());
+                _formdata.AllowComments = row.find("#chkComments").prop("checked");
+                _formdata.AllowVoting = row.find("#chkAllowVoting").prop("checked");
+                _formdata.TimePeriodForComments = row.find("#ddlTimePeriod :selected").val();
+                model.push(_formdata);
+            });
+            $.ajax({
+                url: '/Innovation/Campaign/ImplementationStage',
+                type: 'post',
+                contentType: 'application/json; charet=utf-8',
+                data: JSON.stringify(model),
+                dataType: 'json',
+                success: function (data) {
+                    condole.log(data);
+                },
+                error: function () {
+                    alert("Error while inserting data");
+                }
+            })
+        });
+
+        $('#ManagerId').change(function () {
+            debugger;
+            ManageTU();
+        });
+
+
+        function ManageTU() {
+            debugger;
+            var ManagerId = $("#ManagerId option:selected").val();
+            var targetuser = $("#TargetUsers1 option:selected").val();
+            //if (targetuser == null) {
+
+            var Options = $('#TargetUsers1 option').filter(function () {
+                return $(this);
+            });
+            Options.each(function () {
+                debugger;
+                var temp = $(this);
+                var input = $('input[value="' + ManagerId + '"]');
+                console.log(temp[0].value === ManagerId);
+                if (temp[0].value == ManagerId) {
+                    debugger;
+                    console.log('hi');
+                   // input[0].checked = false;
+                    $('#TargetUsers1').multiselect('deselect', ['' + temp[0].value+'']);
+                    input.prop('disabled', true);
+                }
+                else {
+                    debugger;
+                    var input2 = $('input[value="' + temp[0].value + '"]');
+                    input2.prop('disabled', false);
+                }
+
+
+                //input.parent('li').addClass('disabled');
+                //input.parent('label').css("display", "none");
+            });
+            //}
+
+            
+        }
+
+        function SetNavigation(id) {
+            $.ajax({
+                url: '/Innovation/Campaign/GetCampaignStepsAtFirst',
+                type: 'post',
+                contentType: 'application/json; charet=utf-8',
+                dataType: 'json',
+                data:'{campid:'+id+'}',
+                async: false,
+                success: function (data) {
+                    for (var i = 0; i < data.length; i++) {
+                        var st = {};
+                        st.step = data[i].step;
+                        st.class = data[i]._class;
+                        step.push(st);
+                    }
+                    $('#navigation li').each(function () {
+                        var nav = $(this);
+                        if (nav.index() != 0) {
+                            $(nav).removeClass('active');
+                            $(nav).removeClass('done');
+                            if (nav.index() == 5) {
+                                $(nav).addClass(step[nav.index() + 1].class);
+                            }
+                            else {
+                                $(nav).addClass(step[nav.index()].class);
+                            }
+                        }
+                    });
+                },
+                error: function (data) { }
+            });
+
+
+        }
+    </script>
+    @if (Model.TargetUsers != "")
+    {
+        <script type="text/javascript">
+
+            var arr = [];
+            var str = '@Model.TargetUsers';
+            for (var i = 0; i < str.split(',').length; i++) {
+                arr.push(str.split(',')[i].toString());
+            }
+            $('#TargetUsers1').val(arr);
+        </script>
+    }
+    else
+    {
+        <script type="text/javascript">
+            var arr = [];
+            $('#TargetUsers1').val(arr);
+        </script>
+    }
+}
